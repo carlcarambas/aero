@@ -12,9 +12,10 @@ db.createUser({
 });
 
 // Create initial collections
-db.createCollection('Users');
-db.createCollection('Birds');
-db.createCollection('Races');
+db.createCollection('users');
+db.createCollection('pigeons');
+db.createCollection('races');
+db.createCollection('race_results');
 
-db.Users.createIndex({ email: 1 }, { unique: true });
-db.Birds.createIndex({ owner: 1 });
+db.users.createIndex({ email: 1 }, { unique: true });
+db.pigeons.createIndex({ owner: 1 });
