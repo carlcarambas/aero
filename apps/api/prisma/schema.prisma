@@ -8,40 +8,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Owner {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
-  name      String?
-  birds     Pigeon[]
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  email String   @unique
+  name  String?
+  pigeons Pigeon[]
+  role  UserRole @default(USER)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
 model Pigeon {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   ringNumber  String       @unique
-  owner       Owner        @relation(fields: [ownerId], references: [id])
+  owner       User         @relation(fields: [ownerId], references: [id])
   ownerId     String       @db.ObjectId
   raceIDs     String[]     @db.ObjectId
   races       Race[]       @relation(fields: [raceIDs], references: [id])
   raceResults RaceResult[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+
+  @@map("pigeons")
 }
 
 model Race {
-  id        String       @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  pigeonIDs String[]     @db.ObjectId
-  pigeons   Pigeon[]     @relation(fields: [pigeonIDs], references: [id])
-  distance  Float // in kilometers ?
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  pigeonIDs  String[]     @db.ObjectId
+  pigeons    Pigeon[]     @relation(fields: [pigeonIDs], references: [id])
+  distance   Float // in kilometers ?
   // TODO ask if start point and endpoint are required
   startPoint String
   endPoint   String
-  results   RaceResult[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  results    RaceResult[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@map("races")
 }
 
 model RaceResult {
@@ -57,4 +70,6 @@ model RaceResult {
   status      String // Lost, Completed, Disqualified
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@map("race_results")
 }
