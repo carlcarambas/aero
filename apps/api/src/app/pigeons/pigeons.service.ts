@@ -10,7 +10,6 @@ export class PigeonsService {
     return this.prisma.pigeon.findMany({
       include: {
         owner: true,
-        // breeder: true,
       },
     });
   }
@@ -20,7 +19,6 @@ export class PigeonsService {
       where: { id },
       include: {
         owner: true,
-        // breeder: true,
         raceResults: {
           include: {
             race: true,
@@ -35,7 +33,6 @@ export class PigeonsService {
       data,
       include: {
         owner: true,
-        // breeder: true,
       },
     });
   }
@@ -46,7 +43,6 @@ export class PigeonsService {
       data,
       include: {
         owner: true,
-        // breeder: true,
       },
     });
   }
