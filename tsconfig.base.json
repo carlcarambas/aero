@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,7 +14,15 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@app": ["apps/frontend/src/app"],
+      "@app/*": ["apps/frontend/src/app/*"],
+      "@context/*": ["apps/frontend/src/context/*"],
+      "@api/*": ["apps/api/src/*"],
+      "@frontend-assets/*": ["apps/frontend/assets/*"],
+      "@frontend/*": ["apps/frontend/src/*"],
+      "@components/*": ["apps/frontend/src/app/components/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

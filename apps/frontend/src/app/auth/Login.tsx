@@ -1,3 +1,4 @@
+import { APP_ROUTES } from '@frontend/resources/routes.constants';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,7 +26,7 @@ export function Login() {
       const { name, ...signInData } = formData;
       console.log('## SIGN IN DATA ', signInData);
       // TODO apply login call here
-      navigate('/dashboard');
+      navigate(APP_ROUTES.MY_FLOCK);
     } else {
       console.log(
         'Signing up with:',
