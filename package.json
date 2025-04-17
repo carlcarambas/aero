@@ -9,7 +9,8 @@
     "build:client": "nx build client",
     "build:api": "nx build api",
     "serve:client": "nx serve client",
-    "serve:api": "nx serve api"
+    "serve:api": "nx serve api",
+    "stop:api": "lsof -t -i:3333 | xargs kill"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
