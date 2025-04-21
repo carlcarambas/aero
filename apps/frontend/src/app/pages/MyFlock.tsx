@@ -24,7 +24,7 @@ interface Pigeon {
   breed: string;
   color: string;
   age: number;
-  status: 'active' | 'retired' | 'training';
+  status: 'active' | 'retired' | 'training' | 'on_race';
   lastRace?: string;
   imageUrl?: string;
 }
@@ -53,7 +53,7 @@ const MyFlock: React.FC = () => {
       breed: 'Tippler',
       color: 'Red Check',
       age: 3,
-      status: 'retired',
+      status: 'on_race',
       imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/2.jpg',
     },
     {
@@ -90,6 +90,7 @@ const MyFlock: React.FC = () => {
     active: 'green',
     retired: 'orange',
     training: 'blue',
+    on_race: 'red',
   };
 
   if (isLoading) {

@@ -12,6 +12,9 @@
     "serve:api": "nx serve api",
     "stop:api": "lsof -t -i:3333 | xargs kill"
   },
+  "prisma": {
+    "seed": "ts-node apps/api/prisma/seed.ts"
+  },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@nestjs/schematics": "^10.0.1",
