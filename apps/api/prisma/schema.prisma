@@ -30,6 +30,11 @@ model Pigeon {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   ringNumber  String       @unique
+  breed       String
+  color       String
+  age         Int
+  status      String       @default("active")
+  imageUrl    String?
   owner       User         @relation(fields: [ownerId], references: [id])
   ownerId     String       @db.ObjectId
   raceIDs     String[]     @db.ObjectId
