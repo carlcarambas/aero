@@ -17,14 +17,13 @@ import {
 import { usePigeonsQuery } from '@frontend/services/pigeons/pigeons.service';
 
 const { Text } = Typography;
-
-interface Pigeon {
+export interface Pigeon {
   id: string;
   name: string;
   breed: string;
   color: string;
   age: number;
-  status: 'active' | 'retired' | 'training' | 'on_race';
+  status: 'active' | 'retired' | 'training' | 'in_race';
   lastRace?: string;
   imageUrl?: string;
 }
@@ -34,63 +33,68 @@ const MyFlock: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
-  const { data: pigeonsResult, isLoading } = pigeonsQuery;
+  const { data: pigeons, isLoading, isError, error } = pigeonsQuery;
+
   // Sample data
-  const [pigeons, setPigeons] = useState<Pigeon[]>([
-    {
-      id: '1',
-      name: 'Thunder',
-      breed: 'Racing Homer',
-      color: 'Blue Bar',
-      age: 2,
-      status: 'active',
-      lastRace: '2023-10-15',
-      imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/1.jpg',
-    },
-    {
-      id: '2',
-      name: 'Lightning',
-      breed: 'Tippler',
-      color: 'Red Check',
-      age: 3,
-      status: 'on_race',
-      imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/2.jpg',
-    },
-    {
-      id: '3',
-      name: 'Sky',
-      breed: 'Fantail',
-      color: 'White',
-      age: 1,
-      status: 'training',
-      imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/3.jpg',
-    },
-    {
-      id: '4',
-      name: 'Storm',
-      breed: 'Fantail',
-      color: 'Black',
-      age: 4,
-      status: 'active',
-      lastRace: '2023-11-02',
-      imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/4.jpg',
-    },
-  ]);
+  // const [pigeons, setPigeons] = useState<Pigeon[]>([
+  //   {
+  //     id: '1',
+  //     name: 'Thunder',
+  //     breed: 'Racing Homer',
+  //     color: 'Blue Bar',
+  //     age: 2,
+  //     status: 'active',
+  //     lastRace: '2023-10-15',
+  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/1.jpg',
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Lightning',
+  //     breed: 'Tippler',
+  //     color: 'Red Check',
+  //     age: 3,
+  //     status: 'in_race',
+  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/2.jpg',
+  //   },
+  //   {
+  //     id: '3',
+  //     name: 'Sky',
+  //     breed: 'Fantail',
+  //     color: 'White',
+  //     age: 1,
+  //     status: 'training',
+  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/3.jpg',
+  //   },
+  //   {
+  //     id: '4',
+  //     name: 'Storm',
+  //     breed: 'Fantail',
+  //     color: 'Black',
+  //     age: 4,
+  //     status: 'active',
+  //     lastRace: '2023-11-02',
+  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/4.jpg',
+  //   },
+  // ]);
 
   // Filter pigeons based on search and status
-  const filteredPigeons = pigeons.filter((pigeon) => {
-    const matchesSearch =
-      pigeon.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      pigeon.breed.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStatus = filterStatus ? pigeon.status === filterStatus : true;
-    return matchesSearch && matchesStatus;
-  });
+  const filteredPigeons = pigeons
+    ? pigeons.filter((pigeon) => {
+        const matchesSearch =
+          pigeon.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          pigeon.breed.toLowerCase().includes(searchText.toLowerCase());
+        const matchesStatus = filterStatus
+          ? pigeon.status === filterStatus
+          : true;
+        return matchesSearch && matchesStatus;
+      })
+    : [];
 
   const statusColors = {
     active: 'green',
     retired: 'orange',
     training: 'blue',
-    on_race: 'red',
+    in_race: 'red',
   };
 
   if (isLoading) {
