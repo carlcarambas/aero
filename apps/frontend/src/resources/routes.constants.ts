@@ -1,4 +1,5 @@
 export const APP_ROUTES = {
-  DASHBOARD: '/dashboard',
+  MY_FLOCK: '/my-flock',
+  RACES: '/races',
   LOGIN: '/login',
 };

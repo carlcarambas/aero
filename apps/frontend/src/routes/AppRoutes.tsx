@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from '../app/auth/Login';
-import Dashboard from '../app/pages/Dashboard';
 import ProtectedRoutes from './ProtectedRoutes';
-import MainLayout from '../app/layouts/MainLayout';
+import Login from '@app/components/auth/Login';
+import MyFlock from '@frontend/app/pages/MyFlock';
+import MainLayout from '@frontend/app/layouts/MainLayout';
+import { APP_ROUTES } from '@frontend/resources/routes.constants';
+import Races from '@app/pages/Races';
 
 const AppRoutes = () => (
   <Routes>
@@ -10,8 +12,12 @@ const AppRoutes = () => (
     {/* Protected routes with common layout */}
     <Route element={<ProtectedRoutes />}>
       <Route element={<MainLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path={APP_ROUTES.MY_FLOCK} element={<MyFlock />} />
+        <Route path={APP_ROUTES.RACES} element={<Races />} />
+        <Route
+          path="/"
+          element={<Navigate to={APP_ROUTES.MY_FLOCK} replace />}
+        />
       </Route>
     </Route>
   </Routes>

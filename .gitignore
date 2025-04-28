@@ -43,4 +43,6 @@ Thumbs.db
 
 .nx/installation
 vite.config.*.timestamp*
+
+.env
 vitest.config.*.timestamp*

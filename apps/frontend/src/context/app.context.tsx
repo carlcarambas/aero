@@ -41,7 +41,7 @@ type AppProviderProps = {
 export default function AppContextProvider({ children }: AppProviderProps) {
   const [user, setUser] = useState<User>(null);
   const [selectedNavItem, setSelectedNavItem] = useState<string>(
-    APP_ROUTES.DASHBOARD
+    APP_ROUTES.MY_FLOCK
   );
   const location = useLocation();
   const navigate = useNavigate();

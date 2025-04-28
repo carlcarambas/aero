@@ -1,7 +1,6 @@
 import { Layout, Menu } from 'antd';
 import { Outlet } from 'react-router-dom';
-import { PieChartOutlined, UserOutlined } from '@ant-design/icons';
-import Sidebar from '../components/navigation/Sidebar';
+import Sidebar from '@frontend/app/components/navigation/Sidebar';
 
 const { Header, Content, Sider } = Layout;
 
