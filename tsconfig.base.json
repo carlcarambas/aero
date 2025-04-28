@@ -15,13 +15,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@aero/api-client": ["libs/api-client/src/index.ts"],
+      "@api/*": ["apps/api/src/*"],
       "@app": ["apps/frontend/src/app"],
       "@app/*": ["apps/frontend/src/app/*"],
+      "@components/*": ["apps/frontend/src/app/components/*"],
       "@context/*": ["apps/frontend/src/context/*"],
-      "@api/*": ["apps/api/src/*"],
       "@frontend-assets/*": ["apps/frontend/assets/*"],
-      "@frontend/*": ["apps/frontend/src/*"],
-      "@components/*": ["apps/frontend/src/app/components/*"]
+      "@frontend/*": ["apps/frontend/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

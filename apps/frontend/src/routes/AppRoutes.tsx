@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoutes from './ProtectedRoutes';
-import Login from '@frontend/app/auth/Login';
+import Login from '@app/components/auth/Login';
 import MyFlock from '@frontend/app/pages/MyFlock';
 import MainLayout from '@frontend/app/layouts/MainLayout';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';

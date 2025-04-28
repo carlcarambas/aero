@@ -14,11 +14,12 @@ enum UserRole {
 }
 
 model User {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  email String   @unique
-  name  String?
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String   @unique
+  name    String?
   pigeons Pigeon[]
-  role  UserRole @default(USER)
+  role    UserRole @default(USER)
+  img     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -29,7 +30,7 @@ model User {
 model Pigeon {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  ringNumber  String?       // make this uuid to avoid duplicate ids
+  ringNumber  String? // make this uuid to avoid duplicate ids
   breed       String
   color       String
   age         Int

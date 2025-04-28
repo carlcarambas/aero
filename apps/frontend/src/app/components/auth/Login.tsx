@@ -1,4 +1,5 @@
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
+import { signInWithGoogle } from '@frontend/services/auth/firebase.service';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,6 +26,15 @@ export function Login() {
       console.log('Logging in with:', formData.email, formData.password);
       const { name, ...signInData } = formData;
       console.log('## SIGN IN DATA ', signInData);
+      // const { user } = await signInWithEmailAndPassword(signInData);
+      try {
+        const signInCredentials = await signInWithGoogle();
+        const accessToken = await signInCredentials.user?.getIdToken();
+        console.log('Access token:', accessToken);
+      } catch (error) {
+        console.log('Error signing in:', error);
+      }
+
       // TODO apply login call here
       navigate(APP_ROUTES.MY_FLOCK);
     } else {

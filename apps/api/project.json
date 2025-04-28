@@ -6,15 +6,53 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "development",
       "options": {
-        "command": "webpack-cli build",
-        "args": ["node-env=production"]
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/api",
+        "main": "apps/api/src/main.ts",
+        "tsConfig": "apps/api/tsconfig.app.json",
+        "assets": ["apps/api/src/assets", "apps/api/src/.env"],
+        "webpackConfig": "apps/api/webpack.config.js",
+        "generatePackageJson": true,
+        "sourceMap": true,
+        "deleteOutputPath": false
       },
       "configurations": {
         "development": {
-          "args": ["node-env=development"]
+          "generatePackageJson": true
+        },
+        "production": {
+          "generatePackageJson": true
         }
+      }
+    },
+
+    "build-deploy-api-dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "firebase use aero-racehub",
+            "description": "Sets the Firebase project to aero-racehub"
+          },
+          {
+            "command": "nx run api:build",
+            "description": "Builds the api project"
+          },
+          {
+            "command": "cp $(pwd)/apps/api/prisma/schema.prisma $(pwd)/dist/apps/api",
+            "description": "Copies the prisma schema to the `dist` folder"
+          },
+          {
+            "command": "firebase deploy --only functions --debug",
+            "description": "Deploys the Firebase project"
+          }
+        ],
+        "parallel": false
       }
     },
     "serve": {
@@ -32,11 +70,6 @@
         "production": {
           "buildTarget": "api:build:production"
         }
-      }
-    },
-    "test": {
-      "options": {
-        "passWithNoTests": true
       }
     }
   }
