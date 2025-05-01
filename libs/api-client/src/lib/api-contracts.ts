@@ -27,6 +27,34 @@ export const authContract = c.router(
         500: c.type<{ message: string }>(),
       },
     },
+    me: {
+      method: 'GET',
+      path: '/me',
+      strictStatusCodes: true,
+      headers: z.object({
+        authorization: z.string().startsWith('Bearer'),
+      }),
+      responses: {
+        200: c.type<User>(),
+        401: c.type<{ message: string }>(),
+        403: c.type<{ message: string }>(),
+        404: c.type<{ message: string }>(),
+        500: c.type<{ message: string }>(),
+      },
+    },
+    logout: {
+      method: 'POST',
+      path: '/logout',
+      body: c.type<null>(),
+      strictStatusCodes: true,
+      responses: {
+        200: c.type<null>(),
+        401: c.type<{ message: string }>(),
+        403: c.type<{ message: string }>(),
+        404: c.type<{ message: string }>(),
+        500: c.type<{ message: string }>(),
+      },
+    },
   }
   // {
   //   pathPrefix: '/api/v1',
