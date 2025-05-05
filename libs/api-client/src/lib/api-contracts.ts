@@ -1,4 +1,4 @@
-import { initContract } from '@ts-rest/core';
+import { initContract, ServerInferResponses } from '@ts-rest/core';
 import { z } from 'zod';
 
 export type User = {
@@ -31,9 +31,6 @@ export const authContract = c.router(
       method: 'GET',
       path: '/me',
       strictStatusCodes: true,
-      headers: z.object({
-        authorization: z.string().startsWith('Bearer'),
-      }),
       responses: {
         200: c.type<User>(),
         401: c.type<{ message: string }>(),
@@ -55,8 +52,10 @@ export const authContract = c.router(
         500: c.type<{ message: string }>(),
       },
     },
+  },
+  {
+    pathPrefix: '/auth',
   }
-  // {
-  //   pathPrefix: '/api/v1',
-  // }
 );
+
+export type GetMeResponse = ServerInferResponses<typeof authContract.me>;

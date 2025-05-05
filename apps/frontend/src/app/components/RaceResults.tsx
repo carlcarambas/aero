@@ -263,7 +263,7 @@ const RaceResults: React.FC = () => {
       {showNotification && (
         <Alert
           message="Race Information"
-          description="This race took place on June 15, 2023. All pigeons departed from Barcelona at 06:00 AM local time."
+          description="This race took place on June 15, 2023. All pigeons departed from Pampanga at 06:00 AM local time."
           type="info"
           showIcon
           closable
@@ -350,7 +350,7 @@ const RaceResults: React.FC = () => {
           dataSource={filteredData}
           pagination={{ pageSize: 10 }}
           bordered
-          title={() => <h3>Race Results - Barcelona 350km (15/06/2023)</h3>}
+          title={() => <h3>Race Results - Pampanga 350km (15/06/2023)</h3>}
         />
       </Card>
     </div>

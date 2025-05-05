@@ -1,16 +1,31 @@
+import { api } from '@frontend/lib/configs/api';
+import { useAuthStore } from '@frontend/lib/hooks/use-auth-store';
+import { useSession } from '@frontend/lib/hooks/use-session';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
 import { signInWithGoogle } from '@frontend/services/auth/firebase.service';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Login() {
+  const session = useSession();
+  const navigate = useNavigate();
+  const authStore = useAuthStore();
+  const loginMutation = api.auth.login.useMutation({
+    onSuccess: (data) => {
+      authStore.set({
+        status: 'authenticated',
+        user: data.body,
+      });
+      navigate(APP_ROUTES.MY_FLOCK);
+    },
+  });
+
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
   });
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -30,6 +45,12 @@ export function Login() {
       try {
         const signInCredentials = await signInWithGoogle();
         const accessToken = await signInCredentials.user?.getIdToken();
+        await loginMutation.mutateAsync({
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+          },
+          body: null,
+        });
         console.log('Access token:', accessToken);
       } catch (error) {
         console.log('Error signing in:', error);
@@ -119,6 +140,9 @@ export function Login() {
           <button
             type="submit"
             className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            // disabled={
+            //   session.status === 'loading' || session.status === 'authenticated'
+            // }
           >
             {isLogin ? 'Login' : 'Sign Up'}
           </button>

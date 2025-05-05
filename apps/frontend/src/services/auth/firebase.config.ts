@@ -14,10 +14,10 @@ const firebaseConfig: FirebaseOptions = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  // storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  // messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  // measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 console.log('FIREBASE CONFIG', firebaseConfig, {
@@ -45,11 +45,11 @@ if (import.meta.env.VITE_USE_FIREBASE_EMULATORS === false) {
 }
 
 // set the API basepath using the firebase functions URL
-if (import.meta.env.VITE_HOST_API_ON_FIREBASE) {
-  type firebaseFunctionsWithUrl = typeof firebaseFunctions & {
-    _url?(name: string): string;
-  };
-  axios.defaults.baseURL = (
-    firebaseFunctions as firebaseFunctionsWithUrl
-  )._url?.('api');
-}
+// if (import.meta.env.VITE_HOST_API_ON_FIREBASE) {
+//   type firebaseFunctionsWithUrl = typeof firebaseFunctions & {
+//     _url?(name: string): string;
+//   };
+//   axios.defaults.baseURL = (
+//     firebaseFunctions as firebaseFunctionsWithUrl
+//   )._url?.('api');
+// }

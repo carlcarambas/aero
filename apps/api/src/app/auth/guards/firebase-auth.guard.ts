@@ -27,7 +27,7 @@ export class FirebaseAuthGuard implements CanActivate {
       .verifySessionCookie(sessionCookie, true);
     // this is make this work exclusively with email, but we can add more claims later
     // ex: phone authentication, for now we use email auth
-    if (decodedClaims.email) return true;
+    if (!decodedClaims.email) return true;
 
     // once verified we set property to request
     request.user = {

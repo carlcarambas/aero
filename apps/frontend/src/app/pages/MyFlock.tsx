@@ -112,7 +112,7 @@ const MyFlock: React.FC = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 200 }}
           />
-          <Button.Group>
+          <Space.Compact>
             <Button
               type={filterStatus === null ? 'primary' : 'default'}
               onClick={() => setFilterStatus(null)}
@@ -128,7 +128,7 @@ const MyFlock: React.FC = () => {
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </Button>
             ))}
-          </Button.Group>
+          </Space.Compact>
           <Button type="primary">Add New Pigeon</Button>
         </Space>
       }

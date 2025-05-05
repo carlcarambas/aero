@@ -13,7 +13,7 @@ import { contracts } from '@aero/api-client';
 import { type Response, type Request } from 'express';
 import { FirebaseAuthGuard, ReqWithUser } from './guards/firebase-auth.guard';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
@@ -26,15 +26,20 @@ export class AuthController {
     return tsRestHandler(contracts.auth.login, async ({ headers }) => {
       const accessToken = headers.authorization.replace('Bearer ', '');
 
+      console.log('#### accessToken', accessToken);
+
       try {
-        console.log('LOGIN');
         const { userInfo } = await this.authService.verifyAndUpsertUser(
           accessToken
         );
 
+        console.log('#### userInfo', userInfo);
+
         // create session token with firebase
         const { sessionCookie, expiresIn } =
           await this.authService.createSessionCookie(accessToken);
+        console.log('#### sessionCookie', sessionCookie);
+
         res.cookie('session', sessionCookie, {
           httpOnly: true,
           secure: true,
@@ -48,6 +53,7 @@ export class AuthController {
         };
       } catch (error) {
         if (error instanceof Error) {
+          console.log('#### API ERROR ', error);
           return {
             status: HttpStatus.UNAUTHORIZED,
             body: {

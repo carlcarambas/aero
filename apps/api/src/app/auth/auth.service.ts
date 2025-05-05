@@ -16,13 +16,17 @@ const userSelect = {
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  // constructor() {}
+  constructor() {
+    // console.log('PROCESS ENV ', process.env);
+  }
 
   public async verifyAndUpsertUser(accessToken: string): Promise<{
     decodedToken: DecodedIdToken;
     userInfo: User;
   }> {
     const decodedToken = await admin.auth().verifyIdToken(accessToken);
+
+    console.log('#### decodedToken', decodedToken);
 
     const userInfo = await prisma.user.upsert({
       where: { email: decodedToken.email },
@@ -38,10 +42,18 @@ export class AuthService {
       select: userSelect,
     });
 
+    console.log('#### AFTER UPSERT (userInfo)', userInfo);
+
     // this will allow us to use the user id in the db
     await admin.auth().setCustomUserClaims(decodedToken.uid, {
       dbUserId: userInfo.id,
     });
+
+    console.log(
+      '#### after setCustomUserClaims',
+      decodedToken.uid,
+      userInfo.id
+    );
 
     return { decodedToken, userInfo };
   }
@@ -102,74 +114,4 @@ export class AuthService {
       });
     }
   }
-
-  // public async verifyAndUpsertUser(accessToken: string): Promise<{
-  //   decodedToken: DecodedIdToken;
-  //   userInfo: User;
-  // }> {
-  //   const decodedToken = await admin.auth().verifyIdToken(accessToken);
-
-  //   const userInfo = await prisma.user.upsert({
-  //     where: { email: decodedToken.email },
-  //     create: {
-  //       email: decodedToken.email,
-  //       name: decodedToken.name,
-  //       img: decodedToken.picture,
-  //     },
-  //     update: {
-  //       img: decodedToken.picture,
-  //       name: decodedToken.name,
-  //     },
-  //     select: userSelect,
-  //   });
-
-  //   await admin.auth().setCustomUserClaims(decodedToken.uid, {
-  //     dbUserId: userInfo.id,
-  //   });
-
-  //   return { decodedToken, userInfo };
-  // }
-
-  // public async getUserInfo(email: string): Promise<User> {
-  //   const userInfo = await prisma.user.findUnique({
-  //     where: { email },
-  //     select: userSelect,
-  //   });
-
-  //   if (!userInfo) {
-  //     throw new TsRestException(contracts.auth.me, {
-  //       body: {
-  //         message: 'User not found',
-  //       },
-  //       status: 404,
-  //     });
-  //   }
-
-  //   return userInfo;
-  // }
-
-  // public async revokeToken(sessionCookie: string): Promise<void> {
-  //   try {
-  //     const decodedClaims = await admin
-  //       .auth()
-  //       .verifySessionCookie(sessionCookie, true);
-  //     await admin.auth().revokeRefreshTokens(decodedClaims.sub);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       throw new TsRestException(contracts.auth.logout, {
-  //         body: {
-  //           message: "You're not authorized to access this resource",
-  //         },
-  //         status: HttpStatus.UNAUTHORIZED,
-  //       });
-  //     }
-  //     this.logger.error(`Error revoking token: ${error}`);
-  //     throw new TsRestException(contracts.auth.logout, {
-  //       body: {
-  //         message: 'Error revoking token',
-  //       },
-  //       status: 500,
-  //     });
-  //   }
-  // }
 }

@@ -140,16 +140,47 @@ async function bootstrap(expressInstance: express.Express) {
   app.use(cookieParser());
   app.use(helmet());
   app.enableCors({
-    origin: function (origin, callback) {
-      callback(null, origin);
-    },
+    // origin: function (origin, callback) {
+    //   if (!origin) return callback(null, true);
+
+    //   callback(null, origin);
+    // },
+    origin: ['http://localhost:4200', 'http://127.0.0.1:4200', '*'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+    ],
+    exposedHeaders: ['Authorization'], // Important for credentials
     optionsSuccessStatus: 200,
+    maxAge: 86400,
   });
 
   return app.init();
 }
 
 const server = express();
+
+// middleware for firebase functions
+server.use((req, res, next) => {
+  // const origin = req.headers.origin;
+  // if (origin && ['http://localhost:4200'].includes(origin)) {
+  //   res.setHeader('Access-Control-Allow-Origin', origin);
+  // }
+  // if (req.method === 'OPTIONS') {
+  //   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  //   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  //   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  //   res.header('Access-Control-Allow-Credentials', 'true');
+  //   res.status(200).end();
+  //   return;
+  // }
+  next();
+});
+
 bootstrap(server).then((app) => {
   // if (hostOnFirebaseFunctions) {
   Logger.log(`🚀 Starting firebase functions`);
@@ -179,9 +210,9 @@ Logger.log(`🚀 Starting firebase functions at api`);
 
 // Export Firebase Function
 export const api = onRequest(
-  // {
-  //   memory: '1GiB',
-  //   minInstances: 1,
-  // },
+  {
+    minInstances: 1,
+    memory: '1GiB',
+  },
   server
 );
