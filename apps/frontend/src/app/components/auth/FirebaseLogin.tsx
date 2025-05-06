@@ -7,6 +7,7 @@ import { useAuthStore } from '@frontend/lib/hooks/use-auth-store';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
 import { signInWithGoogle } from '@frontend/services/auth/firebase.service';
 import axios from 'axios';
+import apiRest from '@frontend/lib/configs/api-rest';
 
 const { Title, Text } = Typography;
 
@@ -39,8 +40,19 @@ export function FirebaseLogin() {
 
       console.log('## ACCESS TOKEN ', accessToken);
 
-      const res = await axios.post(
-        'http://127.0.0.1:5001/aero-racehub/us-central1/api/auth/login',
+      // const res = await axios.post(
+      //   'http://127.0.0.1:5001/aero-racehub/us-central1/api/auth/login',
+      //   {},
+      //   {
+      //     headers: {
+      //       // authorization: `Bearer ${accessToken}`,
+      //       Authorization: `Bearer ${accessToken}`,
+      //       'Content-Type': 'application/json',
+      //     },
+      //   }
+      // );
+      const res = await apiRest.post(
+        '/auth/login',
         {},
         {
           headers: {

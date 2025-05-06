@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Pigeon, Prisma } from '@prisma/client';
+import { CreatePigeonDto } from './pigeons.dto';
 
 @Injectable()
 export class PigeonsService {
@@ -28,12 +29,17 @@ export class PigeonsService {
     });
   }
 
-  async create(data: Prisma.PigeonCreateInput): Promise<Pigeon> {
+  async create(createPigeonDto: CreatePigeonDto) {
+    const { ownerId, ...pigeonData } = createPigeonDto;
     return this.prisma.pigeon.create({
-      data,
-      include: {
-        owner: true,
+      data: {
+        name: pigeonData.name,
+        breed: pigeonData.breed,
+        age: pigeonData.age,
+        color: pigeonData.color,
+        ownerId,
       },
+      include: { owner: true },
     });
   }
 

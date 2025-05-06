@@ -8,6 +8,7 @@ import {
   Typography,
   Avatar,
   Card,
+  Modal,
 } from 'antd';
 import {
   SearchOutlined,
@@ -15,6 +16,10 @@ import {
   DeleteOutlined,
 } from '@ant-design/icons';
 import { usePigeonsQuery } from '@frontend/services/pigeons/pigeons.service';
+import { useAppStore } from '@frontend/lib/hooks/app-store';
+import AddPigeonForm from '@app/components/features/myflocks/forms/AddPigeonForm';
+import { useCreatePigeonMutation } from '@app/components/features/myflocks/myflock.queries';
+// import AddPigeonForm from '@app/components/features/myflocks/forms/AddPigeonForm';
 
 const { Text } = Typography;
 export interface Pigeon {
@@ -32,50 +37,24 @@ const MyFlock: React.FC = () => {
   const pigeonsQuery = usePigeonsQuery();
   const [searchText, setSearchText] = useState('');
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
-
   const { data: pigeons, isLoading, isError, error } = pigeonsQuery;
 
-  // Sample data
-  // const [pigeons, setPigeons] = useState<Pigeon[]>([
-  //   {
-  //     id: '1',
-  //     name: 'Thunder',
-  //     breed: 'Racing Homer',
-  //     color: 'Blue Bar',
-  //     age: 2,
-  //     status: 'active',
-  //     lastRace: '2023-10-15',
-  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/1.jpg',
-  //   },
-  //   {
-  //     id: '2',
-  //     name: 'Lightning',
-  //     breed: 'Tippler',
-  //     color: 'Red Check',
-  //     age: 3,
-  //     status: 'in_race',
-  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/2.jpg',
-  //   },
-  //   {
-  //     id: '3',
-  //     name: 'Sky',
-  //     breed: 'Fantail',
-  //     color: 'White',
-  //     age: 1,
-  //     status: 'training',
-  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/3.jpg',
-  //   },
-  //   {
-  //     id: '4',
-  //     name: 'Storm',
-  //     breed: 'Fantail',
-  //     color: 'Black',
-  //     age: 4,
-  //     status: 'active',
-  //     lastRace: '2023-11-02',
-  //     imageUrl: 'https://randomuser.me/api/portraits/thumb/animals/4.jpg',
-  //   },
-  // ]);
+  const { setShowModal } = useAppStore();
+
+  const showAddPigeonModal = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent triggering onRowSelectionChange
+    setShowModal(true, {
+      title: 'Add Pigeon',
+      form: <AddPigeonForm />,
+      okText: 'Submit',
+      cancelText: 'Cancel',
+      width: '50%',
+      onCancel() {
+        setShowModal(false);
+      },
+      footer: null,
+    });
+  };
 
   // Filter pigeons based on search and status
   const filteredPigeons = pigeons
@@ -129,7 +108,9 @@ const MyFlock: React.FC = () => {
               </Button>
             ))}
           </Space.Compact>
-          <Button type="primary">Add New Pigeon</Button>
+          <Button type="primary" onClick={(event) => showAddPigeonModal(event)}>
+            Add New Pigeon
+          </Button>
         </Space>
       }
     >

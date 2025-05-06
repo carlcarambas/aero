@@ -9,14 +9,24 @@ import {
 } from '@nestjs/common';
 import { PigeonsService } from './pigeons.service';
 import { Pigeon as PigeonModel, Prisma } from '@prisma/client';
+import { CreatePigeonDto } from './pigeons.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('pigeons')
 @Controller('pigeons')
 export class PigeonsController {
   constructor(private readonly pigeonsService: PigeonsService) {}
 
   @Post()
-  async create(@Body() data: Prisma.PigeonCreateInput): Promise<PigeonModel> {
-    return this.pigeonsService.create(data);
+  @ApiResponse({
+    status: 201,
+    description: 'Pigeon created successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async create(@Body() data: CreatePigeonDto) {
+    // TODO should get the ownerId from the request
+    const ownerId = '6805f27f9d314aa072dad66a';
+    return this.pigeonsService.create({ ...data, ownerId });
   }
 
   @Get()

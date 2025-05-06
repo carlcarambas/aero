@@ -1,7 +1,9 @@
-import { App as AntApp, ConfigProvider } from 'antd';
+import { App as AntApp, ConfigProvider, Modal } from 'antd';
 import AppRoutes from '@frontend/routes/AppRoutes';
+import { useAppStore } from '@frontend/lib/hooks/app-store';
 
 export function App() {
+  const { showModal, modalContent } = useAppStore();
   return (
     <ConfigProvider
       theme={{
@@ -19,7 +21,10 @@ export function App() {
       }}
     >
       <AntApp>
-        <AppRoutes />;
+        <AppRoutes />
+        <Modal open={showModal} {...modalContent}>
+          {modalContent?.form}
+        </Modal>
       </AntApp>
     </ConfigProvider>
   );
