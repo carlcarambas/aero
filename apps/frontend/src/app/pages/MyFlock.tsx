@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   List,
   Tag,
@@ -8,18 +8,21 @@ import {
   Typography,
   Avatar,
   Card,
-  Modal,
+  Popconfirm,
+  Spin,
+  message,
 } from 'antd';
 import {
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { usePigeonsQuery } from '@frontend/services/pigeons/pigeons.service';
 import { useAppStore } from '@frontend/lib/hooks/app-store';
 import AddPigeonForm from '@app/components/features/myflocks/forms/AddPigeonForm';
-import { useCreatePigeonMutation } from '@app/components/features/myflocks/myflock.queries';
-// import AddPigeonForm from '@app/components/features/myflocks/forms/AddPigeonForm';
+import { useDeletePigeonMutation } from '@app/components/features/myflocks/myflock.queries';
+import { queryClient } from '@frontend/query-client';
 
 const { Text } = Typography;
 export interface Pigeon {
@@ -40,6 +43,12 @@ const MyFlock: React.FC = () => {
   const { data: pigeons, isLoading, isError, error } = pigeonsQuery;
 
   const { setShowModal } = useAppStore();
+  const {
+    mutate: deletePigeon,
+    isPending: deletePigeonIsPending,
+    isSuccess: deletePigeonIsSuccess,
+    isError: deletePigeonIsError,
+  } = useDeletePigeonMutation();
 
   const showAddPigeonModal = (event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent triggering onRowSelectionChange
@@ -55,6 +64,25 @@ const MyFlock: React.FC = () => {
       footer: null,
     });
   };
+
+  const handleDelete = (id: string) => {
+    console.log('Deleting pigeon with id: ', id);
+    try {
+      deletePigeon(id);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (deletePigeonIsSuccess) {
+      message.success('Pigeon Deleted');
+      queryClient.invalidateQueries({ queryKey: ['pigeons'] });
+    }
+    if (deletePigeonIsError) {
+      message.error('Failed to delete pigeon');
+    }
+  }, [deletePigeonIsSuccess]);
 
   // Filter pigeons based on search and status
   const filteredPigeons = pigeons
@@ -77,7 +105,7 @@ const MyFlock: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spin />;
   }
 
   return (
@@ -118,7 +146,7 @@ const MyFlock: React.FC = () => {
         itemLayout="horizontal"
         dataSource={filteredPigeons}
         pagination={{
-          pageSize: 4,
+          pageSize: 10,
           showSizeChanger: false,
           showTotal: (total) => `Total ${total} pigeons`,
         }}
@@ -126,7 +154,20 @@ const MyFlock: React.FC = () => {
           <List.Item
             actions={[
               <Button type="text" icon={<EditOutlined />} />,
-              <Button type="text" danger icon={<DeleteOutlined />} />,
+              <Popconfirm
+                title="Are you sure you want to delete this record?"
+                icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
+                onConfirm={() => handleDelete(pigeon.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  danger
+                  type="text"
+                  icon={<DeleteOutlined />}
+                  loading={deletePigeonIsPending}
+                />
+              </Popconfirm>,
             ]}
           >
             <List.Item.Meta

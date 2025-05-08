@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Form,
   Input,
@@ -11,10 +11,13 @@ import {
   Col,
   Typography,
   Avatar,
+  message,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useCreatePigeonMutation } from '../myflock.queries';
+import { useAppStore } from '@frontend/lib/hooks/app-store';
+import { queryClient } from '@frontend/query-client';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -25,7 +28,7 @@ interface PigeonFormData {
   ringNumber: string;
   gender: 'male' | 'female';
   dateOfBirth?: string;
-  breed?: string;
+  breed: string;
   strain?: string;
   eyeSign?: string;
   fatherId?: string;
@@ -68,16 +71,63 @@ const AddPigeonForm: React.FC = () => {
     mutate: createPigeon,
     isPending: createPigeonIsPending,
     isError: createPigeonIsError,
-    error: createPigeonErrorDetails,
+    isSuccess: createPigeonIsSuccess,
   } = useCreatePigeonMutation();
+
+  const { setShowModal } = useAppStore();
 
   const handleUploadChange = ({ fileList }: { fileList: UploadFile[] }) => {
     setFileList(fileList);
   };
 
   const onFinish = (values: PigeonFormData) => {
-    console.log('Form values:', values);
+    // const sampleReq = {
+    //   name: 'Hoopi',
+    //   ringNumber: 'AU0138941',
+    //   gender: 'male',
+    //   color: 'blue_bar',
+    //   breed: 'racing_homer',
+    //   dateOfBirth: '2024-04-30T16:00:00.000Z',
+    //   fatherId: 'pigeon1',
+    //   motherId: 'pigeon3',
+    //   images: [
+    //     {
+    //       uid: 'rc-upload-1746604529526-2',
+    //       lastModified: 1548735124000,
+    //       lastModifiedDate: '2019-01-29T04:12:04.000Z',
+    //       name: 'jedi.png',
+    //       size: 53675,
+    //       type: 'image/png',
+    //       percent: 0,
+    //       originFileObj: {
+    //         uid: 'rc-upload-1746604529526-2',
+    //       },
+    //       thumbUrl: '',
+    //     },
+    //   ],
+    // };
+    try {
+      const age =
+        new Date().getFullYear() -
+        new Date(values?.dateOfBirth as string).getFullYear();
+      createPigeon({ ...values, status: 'active', age });
+    } catch (error) {
+      console.log('Error:', error);
+    }
   };
+
+  useEffect(() => {
+    if (createPigeonIsSuccess) {
+      message.success('Pigeon added');
+      setShowModal(false);
+      form.resetFields();
+      queryClient.invalidateQueries({ queryKey: ['pigeons'] });
+    }
+
+    if (createPigeonIsError) {
+      message.error('Failed to add pigeon');
+    }
+  }, [createPigeonIsSuccess, createPigeonIsError]);
 
   return (
     <Form
@@ -230,10 +280,19 @@ const AddPigeonForm: React.FC = () => {
       <Row justify="end" style={{ marginTop: 24 }}>
         <Form.Item style={{ alignItems: 'center' }}>
           <Space align="end">
-            <Button htmlType="reset" size="large">
+            <Button
+              htmlType="reset"
+              size="large"
+              disabled={createPigeonIsPending}
+            >
               Reset
             </Button>
-            <Button type="primary" htmlType="submit" size="large">
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              loading={createPigeonIsPending}
+            >
               Save Pigeon
             </Button>
           </Space>
