@@ -4,7 +4,7 @@ import { z } from 'zod';
 export type User = {
   email: string;
   name: string | null;
-  img: string | null;
+  img?: string | null;
 };
 
 const c = initContract();

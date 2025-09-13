@@ -1,4 +1,5 @@
-import { Table, Tag } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
 const RaceList = () => {
@@ -12,6 +13,7 @@ const RaceList = () => {
       title: 'Race Distance',
       dataIndex: 'distance',
       key: 'distance',
+      render: (distance: string) => `${distance} km`,
     },
     {
       title: 'Race Date',
@@ -60,8 +62,79 @@ const RaceList = () => {
     // },
   ];
 
+  const mockData = [
+    {
+      id: 1,
+      name: 'Race 1',
+      date: '2023-05-01',
+      time: '12:00',
+      status: 'upcoming',
+      distance: '350',
+    },
+    {
+      id: 2,
+      name: 'Race 2',
+      date: '2023-05-02',
+      time: '12:00',
+      status: 'upcoming',
+      distance: '350',
+    },
+    {
+      id: 3,
+      name: 'Race 3',
+      date: '2023-05-03',
+      time: '12:00',
+      status: 'upcoming',
+      distance: '500',
+    },
+  ];
+
+  // const filteredRaces = mockData.filter((race) => {
+  //   const matchesSearch = race?.status.toLowerCase().includes()
+  // })
+
+  const statusColors = {
+    upcoming: 'orange',
+    finished: 'green',
+    cancelled: 'grey',
+  };
+
   return (
-    <Table title={() => <h3>Upcoming Races</h3>} columns={columns}></Table>
+    <Card
+      extra={
+        <Space>
+          <Input
+            placeholder="Search pigeons..."
+            prefix={<SearchOutlined />}
+            // onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 200 }}
+          />
+          <Space.Compact>
+            <Button
+              type="default"
+              // type={filterStatus === null ? 'primary' : 'default'}
+              // onClick={() => setFilterStatus(null)}
+            >
+              All
+            </Button>
+            {Object.keys(statusColors).map((status) => (
+              <Button
+                key={status}
+                // type={filterStatus === status ? 'primary' : 'default'}
+                // onClick={() => setFilterStatus(status)}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Button>
+            ))}
+          </Space.Compact>
+        </Space>
+      }
+    ></Card>
+    // <Table
+    //   title={() => <h3>Upcoming Races</h3>}
+    //   columns={columns}
+    //   dataSource={mockData}
+    // ></Table>
   );
 };
 

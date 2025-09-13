@@ -1,24 +1,29 @@
 import { api } from '@frontend/lib/configs/api';
 import { useAuthStore } from '@frontend/lib/hooks/use-auth-store';
-import { useSession } from '@frontend/lib/hooks/use-session';
+// import { useSession } from '@frontend/lib/hooks/use-session';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
-import { signInWithGoogle } from '@frontend/services/auth/firebase.service';
+import { firebaseAuth } from '@frontend/services/auth/firebase.config';
+// import { signInWithGoogle } from '@frontend/services/auth/firebase.service';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Login() {
-  const session = useSession();
+  // const session = useSession();
   const navigate = useNavigate();
   const authStore = useAuthStore();
-  const loginMutation = api.auth.login.useMutation({
-    onSuccess: (data) => {
-      authStore.set({
-        status: 'authenticated',
-        user: data.body,
-      });
-      navigate(APP_ROUTES.MY_FLOCK);
-    },
-  });
+  // const loginMutation = api.auth.login.useMutation({
+  //   onSuccess: (data) => {
+  //     authStore.set({
+  //       status: 'authenticated',
+  //       user: data.body,
+  //     });
+  //     navigate(APP_ROUTES.MY_FLOCK);
+  //   },
+  // });
 
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -40,24 +45,38 @@ export function Login() {
     if (isLogin) {
       console.log('Logging in with:', formData.email, formData.password);
       const { name, ...signInData } = formData;
-      console.log('## SIGN IN DATA ', signInData);
-      // const { user } = await signInWithEmailAndPassword(signInData);
+
       try {
-        const signInCredentials = await signInWithGoogle();
-        const accessToken = await signInCredentials.user?.getIdToken();
-        await loginMutation.mutateAsync({
-          headers: {
-            authorization: `Bearer ${accessToken}`,
+        // const authResponse = await signInWithEmailAndPassword(
+        //   firebaseAuth,
+        //   signInData.email,
+        //   signInData.password
+        // );
+
+        authStore.set({
+          status: 'authenticated',
+          user: {
+            // email: authResponse.user.email as string,
+            // name: authResponse.user.displayName,
+            email: 'carlmark.carambas@gmail.com',
+            name: 'Carl Mark Carambas',
           },
-          body: null,
         });
-        console.log('Access token:', accessToken);
+        navigate(APP_ROUTES.MY_FLOCK);
+
+        // const signInCredentials = await signInWithGoogle();
+        // const accessToken = await signInCredentials.user?.getIdToken();
+        // await loginMutation.mutateAsync({
+        //   headers: {
+        //     authorization: `Bearer ${accessToken}`,
+        //   },
+        //   body: null,
+        // });
+        // console.log('Access token:', authResponse);
       } catch (error) {
+        // TODO validation here
         console.log('Error signing in:', error);
       }
-
-      // TODO apply login call here
-      navigate(APP_ROUTES.MY_FLOCK);
     } else {
       console.log(
         'Signing up with:',
@@ -65,7 +84,17 @@ export function Login() {
         formData.email,
         formData.password
       );
-      // TODO signup logic
+      try {
+        const signUpResponse = await createUserWithEmailAndPassword(
+          firebaseAuth,
+          formData?.email,
+          formData?.password
+        );
+        console.log('## signUpResponse', signUpResponse);
+        setIsLogin(true); // will switch to login
+      } catch (signUpError) {
+        console.log('## error', signUpError);
+      }
     }
     // setIsLoading(false);
   };

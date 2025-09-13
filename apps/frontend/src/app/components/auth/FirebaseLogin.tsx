@@ -16,21 +16,21 @@ export function FirebaseLogin() {
   const authStore = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const loginMutation = api.auth.login.useMutation({
-    onSuccess: (data) => {
-      authStore.set({
-        status: 'authenticated',
-        user: data.body,
-      });
-      message.success('Successfully logged in!');
-      navigate(APP_ROUTES.MY_FLOCK);
-    },
-    onError: (error) => {
-      console.log('### ERROR ', error);
-      message.error('Failed to authenticate with the server');
-      setIsLoading(false);
-    },
-  });
+  // const loginMutation = api.auth.login.useMutation({
+  //   onSuccess: (data) => {
+  //     authStore.set({
+  //       status: 'authenticated',
+  //       user: data.body,
+  //     });
+  //     message.success('Successfully logged in!');
+  //     navigate(APP_ROUTES.MY_FLOCK);
+  //   },
+  //   onError: (error) => {
+  //     console.log('### ERROR ', error);
+  //     message.error('Failed to authenticate with the server');
+  //     setIsLoading(false);
+  //   },
+  // });
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
