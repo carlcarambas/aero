@@ -12,6 +12,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 // import { api } from './lib/configs/api';
 
+console.log('🚀 Frontend is being served at http://localhost:4200');
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

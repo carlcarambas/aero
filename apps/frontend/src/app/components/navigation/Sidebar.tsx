@@ -17,19 +17,20 @@ const Sidebar = () => {
     appContext.navigateToPage(e.key);
   };
 
+  const menuItems = MENU_ITEMS.map((item) => ({
+    key: item?.key,
+    icon: item?.icon,
+    label: item?.label,
+  }));
+
   return (
     <Menu
       theme="dark"
       mode="inline"
       onClick={handleMenuClick}
       selectedKeys={[appContext?.selectedNavItem]}
-    >
-      {MENU_ITEMS.map((item) => (
-        <Menu.Item key={item?.key} icon={item?.icon}>
-          {item?.label}
-        </Menu.Item>
-      ))}
-    </Menu>
+      items={menuItems}
+    />
   );
 };
 
