@@ -14,7 +14,7 @@
     "ui:deploy:dev": "nx run frontend:build-deploy-ui",
     "serve:frontend": "nx serve frontend",
     "------------- Local -------------": "",
-    "start:local": "npm run build:local:api && nx run api:start-local && nx serve frontend",
+    "start:local": "nx run start-local",
     "build:local:api": "npm run dist:clean && env-cmd -f config/local/local.api.env nx build api --verbose",
     "------------- Prisma -------------": "",
     "prisma:generate": "prisma generate --schema ./apps/api/prisma/schema.prisma",

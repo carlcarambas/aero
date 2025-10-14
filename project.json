@@ -1,0 +1,32 @@
+{
+  "name": "carl-onboarding",
+  "$schema": "./node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": ".",
+  "projectType": "application",
+  "targets": {
+    "start-local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "pnpm run dist:clean",
+            "description": "Cleans the dist directory"
+          },
+          {
+            "command": "firebase use aero-racehub",
+            "description": "Sets the Firebase project to aero-racehub"
+          },
+          {
+            "command": "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/config/local/firebase-service-account-dev.json env-cmd -f $(pwd)/config/local/local.api.env nx run-many --targets=serve --projects=api,frontend",
+            "description": "Starts the api and frontend projects with environment variables"
+          },
+          {
+            "command": "firebase emulators:start --only functions,auth",
+            "description": "Starts the Firebase Emulators"
+          }
+        ],
+        "parallel": true
+      }
+    }
+  }
+}
