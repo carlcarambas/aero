@@ -61,7 +61,19 @@
       "options": {
         "commands": [
           {
-            "command": "firebase emulators:start --only functions,auth",
+            "command": "pnpm run dist:clean",
+            "description": "Cleans the ui project"
+          },
+          {
+            "command": "cp $(pwd)/config/local/local.ui.env $(pwd)/apps/ui/.env",
+            "description": "Copies the local ui environment variables to the ui project"
+          },
+          {
+            "command": "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/config/local/firebase-service-account-dev.json env-cmd -f $(pwd)/config/local/local.api.env nx run-many --targets=serve --projects=frontend,api",
+            "description": "Starts the ui and service projects with environment variables"
+          },
+          {
+            "command": "firebase emulators:start --only storage,auth",
             "description": "Starts the Firebase Emulators"
           }
         ],
