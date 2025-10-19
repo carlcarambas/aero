@@ -8,7 +8,7 @@ import {
   Avatar,
   Card,
   Tag,
-  Spin,
+  message,
 } from 'antd';
 import {
   SearchOutlined,
@@ -17,103 +17,51 @@ import {
   DeleteOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useAppStore } from '@frontend/lib/hooks/app-store';
+import AddUserForm from '@app/components/features/users/forms/AddUserForm';
+import {
+  useUsersQuery,
+  useDeleteUserMutation,
+  User,
+} from '@frontend/services/users/users.service';
 
 const { Text } = Typography;
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'moderator' | 'user';
-  status: 'active' | 'inactive';
-  lastLogin: string;
-  avatar: string | null;
-  pigeonsCount: number;
-  latitude: number;
-  longitude: number;
-  city: string;
-}
-
-// Mock data for UI development
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'admin',
-    status: 'active',
-    lastLogin: '2024-01-15',
-    avatar: null,
-    pigeonsCount: 12,
-    latitude: 40.7128,
-    longitude: -74.0060,
-    city: 'New York',
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'user',
-    status: 'active',
-    lastLogin: '2024-01-14',
-    avatar: null,
-    pigeonsCount: 8,
-    latitude: 34.0522,
-    longitude: -118.2437,
-    city: 'Los Angeles',
-  },
-  {
-    id: '3',
-    name: 'Bob Johnson',
-    email: 'bob.johnson@example.com',
-    role: 'moderator',
-    status: 'inactive',
-    lastLogin: '2024-01-10',
-    avatar: null,
-    pigeonsCount: 5,
-    latitude: 41.8781,
-    longitude: -87.6298,
-    city: 'Chicago',
-  },
-  {
-    id: '4',
-    name: 'Alice Brown',
-    email: 'alice.brown@example.com',
-    role: 'user',
-    status: 'active',
-    lastLogin: '2024-01-15',
-    avatar: null,
-    pigeonsCount: 15,
-    latitude: 29.7604,
-    longitude: -95.3698,
-    city: 'Houston',
-  },
-];
-
 const Users: React.FC = () => {
   const [searchText, setSearchText] = useState('');
-  const [isLoading] = useState(false);
+  const { setShowModal } = useAppStore();
+
+  // API queries
+  const { data: users, isLoading, isError, error } = useUsersQuery();
+  const { mutate: deleteUser, isPending: deleteUserIsPending } =
+    useDeleteUserMutation();
 
   // Filter users based on search
-  const filteredUsers = mockUsers.filter((user) =>
-    user.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchText.toLowerCase())
-  );
+  const filteredUsers =
+    users?.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+        false ||
+        user.email.toLowerCase().includes(searchText.toLowerCase())
+    ) || [];
 
   const roleColors = {
-    admin: 'red',
-    moderator: 'blue',
-    user: 'green',
-  };
-
-  const statusColors = {
-    active: 'green',
-    inactive: 'orange',
+    ADMIN: 'red',
+    USER: 'green',
   };
 
   const handleCreateUser = () => {
-    console.log('Create user clicked');
-    // TODO: Implement create user functionality
+    setShowModal(true, {
+      title: 'Create New User',
+      form: <AddUserForm />,
+      okText: 'Create',
+      cancelText: 'Cancel',
+      width: '60%',
+      onCancel() {
+        setShowModal(false);
+      },
+      footer: null,
+    });
   };
 
   const handleEditUser = (userId: string) => {
@@ -122,8 +70,14 @@ const Users: React.FC = () => {
   };
 
   const handleDeleteUser = (userId: string) => {
-    console.log('Delete user:', userId);
-    // TODO: Implement delete user functionality
+    deleteUser(userId, {
+      onSuccess: () => {
+        message.success('User deleted successfully');
+      },
+      onError: () => {
+        message.error('Failed to delete user');
+      },
+    });
   };
 
   const columns = [
@@ -132,14 +86,14 @@ const Users: React.FC = () => {
       key: 'user',
       render: (record: User) => (
         <Space>
-          <Avatar 
-            src={record.avatar} 
-            icon={<UserOutlined />} 
-            size="large" 
-          />
+          <Avatar src={record.img} icon={<UserOutlined />} size="large" />
           <div>
-            <div><Text strong>{record.name}</Text></div>
-            <div><Text type="secondary">{record.email}</Text></div>
+            <div>
+              <Text strong>{record.name || 'No Name'}</Text>
+            </div>
+            <div>
+              <Text type="secondary">{record.email}</Text>
+            </div>
           </div>
         </Space>
       ),
@@ -149,50 +103,43 @@ const Users: React.FC = () => {
       dataIndex: 'role',
       key: 'role',
       render: (role: string) => (
-        <Tag color={roleColors[role as keyof typeof roleColors]}>
-          {role.toUpperCase()}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => (
-        <Tag color={statusColors[status as keyof typeof statusColors]}>
-          {status.toUpperCase()}
-        </Tag>
+        <Tag color={roleColors[role as keyof typeof roleColors]}>{role}</Tag>
       ),
     },
     {
       title: 'Pigeons',
-      dataIndex: 'pigeonsCount',
-      key: 'pigeonsCount',
-      render: (count: number) => (
+      dataIndex: 'pigeons',
+      key: 'pigeons',
+      render: (pigeons: unknown[]) => (
         <Text strong style={{ fontSize: '16px' }}>
-          {count}
+          {pigeons?.length || 0}
         </Text>
       ),
-      sorter: (a: User, b: User) => a.pigeonsCount - b.pigeonsCount,
+      sorter: (a: User, b: User) =>
+        (a.pigeons?.length || 0) - (b.pigeons?.length || 0),
     },
     {
       title: 'Location',
       key: 'location',
       render: (record: User) => (
         <div>
-          <div><Text strong>{record.city}</Text></div>
-          <div><Text type="secondary" style={{ fontSize: '12px' }}>
-            {record.latitude.toFixed(4)}, {record.longitude.toFixed(4)}
-          </Text></div>
+          <div>
+            <Text strong>{record.city || 'No City'}</Text>
+          </div>
+          <div>
+            <Text type="secondary" style={{ fontSize: '12px' }}>
+              {record.lat.toFixed(4)}, {record.lng.toFixed(4)}
+            </Text>
+          </div>
         </div>
       ),
     },
     {
-      title: 'Last Login',
-      dataIndex: 'lastLogin',
-      key: 'lastLogin',
+      title: 'Created',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (date: string) => (
-        <Text type="secondary">{date}</Text>
+        <Text type="secondary">{new Date(date).toLocaleDateString()}</Text>
       ),
     },
     {
@@ -200,15 +147,16 @@ const Users: React.FC = () => {
       key: 'actions',
       render: (record: User) => (
         <Space>
-          <Button 
-            type="text" 
-            icon={<EditOutlined />} 
+          <Button
+            type="text"
+            icon={<EditOutlined />}
             onClick={() => handleEditUser(record.id)}
           />
           <Button
             danger
             type="text"
             icon={<DeleteOutlined />}
+            loading={deleteUserIsPending}
             onClick={() => handleDeleteUser(record.id)}
           />
         </Space>
@@ -216,8 +164,14 @@ const Users: React.FC = () => {
     },
   ];
 
-  if (isLoading) {
-    return <Spin />;
+  if (isError) {
+    return (
+      <Card>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Text type="danger">Error loading users: {error?.message}</Text>
+        </div>
+      </Card>
+    );
   }
 
   return (
@@ -231,7 +185,11 @@ const Users: React.FC = () => {
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 200 }}
           />
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateUser}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleCreateUser}
+          >
             Create User
           </Button>
         </Space>
