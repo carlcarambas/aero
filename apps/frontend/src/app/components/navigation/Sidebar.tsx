@@ -1,4 +1,8 @@
-import { DingtalkOutlined, TrophyFilled } from '@ant-design/icons';
+import {
+  DingtalkOutlined,
+  TrophyFilled,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Menu } from 'antd';
 import { useAppContext } from '@context/app.context';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
@@ -9,6 +13,7 @@ const MENU_ITEMS = [
     icon: <DingtalkOutlined />,
   },
   { key: APP_ROUTES.RACES, label: 'Races', icon: <TrophyFilled /> },
+  { key: APP_ROUTES.USERS, label: 'Users', icon: <UserOutlined /> },
 ];
 
 const Sidebar = () => {

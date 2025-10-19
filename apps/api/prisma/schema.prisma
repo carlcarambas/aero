@@ -16,6 +16,14 @@ enum UserRole {
 model User {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String   @unique
+  contactNumber String?
+  address String?
+  city String?
+  state String?
+  postalCode String?
+  country String?
+  lat Float @default(0.0)
+  lng Float @default(0.0)
   name    String?
   pigeons Pigeon[]
   role    UserRole @default(USER)

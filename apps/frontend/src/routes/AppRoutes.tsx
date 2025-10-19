@@ -5,6 +5,7 @@ import MyFlock from '@frontend/app/pages/MyFlock';
 import MainLayout from '@frontend/app/layouts/MainLayout';
 import { APP_ROUTES } from '@frontend/resources/routes.constants';
 import Races from '@app/pages/Races';
+import Users from '@frontend/app/pages/Users';
 // import FirebaseLogin from '@app/components/auth/FirebaseLogin';
 
 const AppRoutes = () => (
@@ -16,6 +17,7 @@ const AppRoutes = () => (
       <Route element={<MainLayout />}>
         <Route path={APP_ROUTES.MY_FLOCK} element={<MyFlock />} />
         <Route path={APP_ROUTES.RACES} element={<Races />} />
+        <Route path={APP_ROUTES.USERS} element={<Users />} />
         <Route
           path="/"
           element={<Navigate to={APP_ROUTES.MY_FLOCK} replace />}
